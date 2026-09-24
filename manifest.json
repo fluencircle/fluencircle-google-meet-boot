@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "FluenCircle Bot",
+  "version": "1.0",
+  "description": "Bot assistente de vocabulário para Google Meet do FluenCircle",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://meet.google.com/*",
+    "https://translate.googleapis.com/*",
+    "https://firestore.googleapis.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": ["content.js", "env.js"],
+      "run_at": "document_idle"
+    }
+  ],
+ "icons": {
+    "128": "FluenCircleBot.png"
+  },
+
+    "action": {
+    "default_icon": "FluenCircleBot.png"
+  }
+
+}
