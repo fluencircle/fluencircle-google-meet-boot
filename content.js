@@ -1,4 +1,10 @@
 
+<<<<<<< HEAD
+=======
+  const RTDB_BASE = "https://fluentech-1e18a-default-rtdb.firebaseio.com";
+ const RTDB_BASE_ALT = "https://fluentech-1e18a.firebaseio.com";
+
+>>>>>>> 49447a8 (removed keys and connected to server)
 let botActive = true;
 const seenElements = new Set();
 let isSending = false;
@@ -74,6 +80,7 @@ async function fetchCurrentSession() {
 }
 
 
+<<<<<<< HEAD
 async function translate(word) {
   try {
     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=${encodeURIComponent(word)}`;
@@ -83,6 +90,29 @@ async function translate(word) {
   } catch (e) {
     console.error("[Bot] Erro ao traduzir:", e);
     return null;
+=======
+ async function askGemini(prompt) {
+const BACKEND_URL = 'https://fluencircle-backend.onrender.com';
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/gemini/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    console.log(response)
+
+    if (!response.ok) {
+      throw new Error(`Erro no servidor: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.text;
+  } catch (error) {
+    console.error('Erro ao chamar o backend:', error);
+    throw error;
+>>>>>>> 49447a8 (removed keys and connected to server)
   }
 }
 
@@ -179,8 +209,13 @@ setInterval(async () => {
           return;
         }
 
+<<<<<<< HEAD
 
         const translation = await translate(word);
+=======
+         const prompt = `retorne a tradução da palavra, de en para pt ou pt para en. Caso seja uma palavra única e que tenha múltiplas traduções, separe as traduções por /, com no máximo 3. Caso seja uma frase, nunca repita a frase inteira mais de uma vez, retorne uma tradução única que fizer mais sentido pelo contexto. Retorne SOMENTE as traduções, sem nenhuma adição. Ex: annoying, resposta: 'estressante / irritante' Palavra a ser traduzida: ${word}`
+        const translation = await askGemini(prompt);
+>>>>>>> 49447a8 (removed keys and connected to server)
         if (translation) {
           await saveFlashcard(currentSession.sessionId, currentSession.topic, word, translation);
           await sendToChat(`[${word}]: ${translation}`);
