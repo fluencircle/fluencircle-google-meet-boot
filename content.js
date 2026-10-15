@@ -1,4 +1,7 @@
 
+  const RTDB_BASE = "https://fluentech-1e18a-default-rtdb.firebaseio.com";
+ const RTDB_BASE_ALT = "https://fluentech-1e18a.firebaseio.com";
+
 let botActive = true;
 const seenElements = new Set();
 let isSending = false;
@@ -178,10 +181,12 @@ setInterval(async () => {
     if (el.children.length === 0 && el.tagName === 'DIV') {
       const text = (el.innerText || el.textContent || '').trim();
 
-      const match = text.match(/^fc:\s*(.+)$/i);
-      if (match) {
+      const matchFc = text.match(/^fc:\s*(.+)$/i);
+      const matchGem = text.match(/^askGem:\s*(.+)$/i)
+
+      if (matchFc || matchGem) {
         seenElements.add(el);
-        const word = match[1].trim();
+        const word = matchFc?matchFc[1].trim():matchGem[1].trim();
         console.log(`%c[Bot] Comando capturado: "${word}"`, "background:#38bdf8;color:#000;padding:2px 8px;font-weight:bold;");
         const currentSession = await fetchCurrentSession();
 
@@ -191,12 +196,18 @@ setInterval(async () => {
           return;
         }
 
-const prompt = `retorne a tradução da palavra, de en para pt ou pt para en. Caso seja uma palavra única e que tenha múltiplas traduções, separe as traduções por /, com no máximo 3. Caso seja uma frase, nunca repita a frase inteira mais de uma vez, retorne uma tradução única que fizer mais sentido pelo contexto. Retorne SOMENTE as traduções, sem nenhuma adição. Ex: annoying, resposta: 'estressante / irritante' Palavra a ser traduzida: ${word}`
-        const translation = await askGemini(prompt);
-
-        if (translation) {
-          await saveFlashcard(currentSession.sessionId, currentSession.topic, word, translation);
-          await sendToChat(`[${word}]: ${translation}`);
+        const promptGem = `responda: ${word} da forma mais direta possível, sem pontuações denecessárias ou negrito, sabendo que vai para um chat do google meet. Caso seja uma pergunta inadequada ou não associada ao contexto de conversação em inglês, responda somente: "Faça uma pergunta sobre inglês!"`
+        const promptTranslation = `retorne a tradução da palavra, de en para pt ou pt para en. Caso seja uma palavra única e que tenha múltiplas traduções, separe as traduções por /, com no máximo 3. Caso seja uma frase, nunca repita a frase inteira mais de uma vez, retorne uma tradução única que fizer mais sentido pelo contexto. Retorne SOMENTE as traduções, sem nenhuma adição. Ex: annoying, resposta: 'estressante / irritante' Palavra a ser traduzida: ${word}. `
+        const answer = matchFc? await askGemini(promptTranslation) : await askGemini(promptGem);
+        if (answer) {
+          
+          if(matchFc){
+            await saveFlashcard(currentSession.sessionId, currentSession.topic, word, answer);
+          await sendToChat(`[${word}]: ${answer}`);
+          }else if(matchGem){
+            await sendToChat(`[Gemini]: ${answer}`);
+          }
+          
         }
       }
     }

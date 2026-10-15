@@ -8,22 +8,13 @@
   ],
   "host_permissions": [
     "https://meet.google.com/*",
-<<<<<<< HEAD
-    "https://translate.googleapis.com/*",
-    "https://firestore.googleapis.com/*"
-=======
     "https://firestore.googleapis.com/*",
     "https://generativelanguage.googleapis.com/*"
->>>>>>> 49447a8 (removed keys and connected to server)
   ],
   "content_scripts": [
     {
       "matches": ["https://meet.google.com/*"],
-<<<<<<< HEAD
-      "js": ["content.js", "env.js"],
-=======
       "js": ["content.js"],
->>>>>>> 49447a8 (removed keys and connected to server)
       "run_at": "document_idle"
     }
   ],
